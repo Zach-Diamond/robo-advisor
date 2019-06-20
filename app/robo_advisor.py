@@ -56,11 +56,16 @@ parsed_timeseries = parsed_response['Time Series (Daily)']
 try:
     parsed_response['Time Series (Daily)'][todaydate]
 except:
-    print("Stock symbol not recognized. Please restart and try again.")
-    exit()
+    all_dates = list(parsed_timeseries.keys()) 
+    todaydate = all_dates[0]
+    yesterdaydate = all_dates[1]
 
 today_parsed_timeseries = parsed_response['Time Series (Daily)'][todaydate]
 
+# try:
+#     parsed_response['Time Series (Daily)'][todaydate]
+# except:
+    
 
 ########VARIABLES TO BE USED
 #Creating TODAY Variables
@@ -109,46 +114,46 @@ else:
     total_score+=-2
     reasons.append("(-) This stock has a negative slope.")
 
-#Is today's low  > daily high average?
+#Is Recent low  > daily high average?
 if (today_low/daily_high_average)-1 > .2:
     total_score+=4
-    reasons.append("(++) Today's low is >20% vs. its average daily high!")
+    reasons.append("(++) Recent low is >20% vs. its average daily high!")
 elif (today_low/daily_high_average)-1 > .1:
     total_score+=2
-    reasons.append("(+) Today's low is >10% vs. its average daily high.")
+    reasons.append("(+) Recent low is >10% vs. its average daily high.")
 else:
     total_score+=0
-    reasons.append("(-) Today's low is not very strong vs. its average daily high.")
+    reasons.append("(-) Recent low is not very strong vs. its average daily high.")
 
-#Is today's low more than 1.5 St.D. over average daily high?
+#Is Recent low more than 1.5 St.D. over average daily high?
 if today_low > daily_high_average+(daily_high_std*2):
     total_score+=3
-    reasons.append("(++) Today's low is more than 2 deviations over the average daily high!")
+    reasons.append("(++) Recent low is more than 2 deviations over the average daily high!")
 if today_low > daily_high_average+(daily_high_std):
     total_score+=1
-    reasons.append("(+) Today's low is more than 1 deviation over the average daily high!")
+    reasons.append("(+) Recent low is more than 1 deviation over the average daily high!")
 else:
     total_score+=0
-    reasons.append("(-) Today's low is not remarkable vs. the average daily high's standard deviation.")
+    reasons.append("(-) Recent low is not remarkable vs. the average daily high's standard deviation.")
 
 #Is the opening price > yesterday's close?
 if today_open>yesterday_close:
     total_score+=1
-    reasons.append("(+) Today's open is higher than yesterday's close!")
+    reasons.append("(+) Recent open is higher than yesterday's close!")
 else:
     total_score+=0
-    reasons.append("(-) Today's open is below yesterday's close.")
+    reasons.append("(-) Recent open is below yesterday's close.")
 
 #Is the opening price > daily high average?
 if (today_open/daily_high_average)-1 > .2:
     total_score+=2
-    reasons.append("(+) Today's open is >20% vs. average daily high!")
+    reasons.append("(+) Recent open is >20% vs. average daily high!")
 elif (today_open/daily_high_average)-1 > .1:
     total_score+=1
-    reasons.append("(+) Today's open is >10% vs. average daily high.")
+    reasons.append("(+) Recent open is >10% vs. average daily high.")
 else:
     total_score+=0
-    reasons.append("(-) Today's open is not very strong vs. daily high.")
+    reasons.append("(-) Recent open is not very strong vs. daily high.")
 
 reasons_clean = [i for i in reasons]
 
@@ -202,6 +207,8 @@ csvFile.close()
 
 print('--------------------------------------')
 print('GOOD LUCK INVESTING!')
+print('--------------------------------------')
+print('DISCLAIMER:')
 print('I am not liable for any money lost')
 print('due to the questionable nature of')
 print('this "algorithm." That is all on you!')
