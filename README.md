@@ -10,4 +10,5 @@
 1. After activating, run python robo_advisor.py
 2. Enter in a valid stock symbol (e.g. GOOG)
 3. Run and invest (cautiously)!
+4. Note: Historical stock data will be saved in a CSV in the /data/ folder, as will a PNG chart of that stock's historical high
 

@@ -9,6 +9,7 @@ import pandas as pd
 from sklearn import linear_model
 import csv
 import numpy as np
+import matplotlib.pyplot as plt
 load_dotenv()
 
 
@@ -90,12 +91,12 @@ daily_high_std = np.std(daily_highs)
 daily_lows_std = np.std(daily_lows)
 
 #Attempting to calculate slope - help from https://stackoverflow.com/questions/53100393/how-to-get-slope-from-timeseries-data-in-pandas
-df = pd.DataFrame([(i,float(parsed_timeseries[i]['2. high'])) for i in parsed_timeseries], columns=['date','high'])
-df['high'] = pd.to_numeric(df['high'], errors='coerce')
-df['date']=pd.to_datetime(df['date'])
-df['date_ordinal'] = pd.to_datetime(df['date']).map(datetime.toordinal)
+df_highs = pd.DataFrame([(i,float(parsed_timeseries[i]['2. high'])) for i in parsed_timeseries], columns=['date','high'])
+df_highs['high'] = pd.to_numeric(df_highs['high'], errors='coerce')
+df_highs['date']=pd.to_datetime(df_highs['date'])
+df_highs['date_ordinal'] = pd.to_datetime(df_highs['date']).map(datetime.toordinal)
 reg = linear_model.LinearRegression()
-reg.fit(df['date_ordinal'].values.reshape(-1, 1), df['high'].values)
+reg.fit(df_highs['date_ordinal'].values.reshape(-1, 1), df_highs['high'].values)
 slope = float(reg.coef_)
 
 
@@ -218,14 +219,28 @@ print('due to the questionable nature of')
 print('this "algorithm." That is all on you!')
 print('--------------------------------------')
 
-# print("RECOMMENDATION: BUY!")
-# print("RECOMMENDATION REASON: TODO")
-# print("-------------------------")
-# print("HAPPY INVESTING!")
-# print("-------------------------")
+#Creating chart
+df_highs.drop(['date_ordinal'],axis=1)
+repivot = df_highs.groupby(['date'])[['high']].sum() #Forced to repivot because of a datetime issue (-0) that I couldn't figure out
+fig, ax = plt.subplots()
+repivot.plot(kind='line', 
+                  ax=ax, 
+                  figsize=(15,8), 
+                  color=['mediumblue'],
+                  #alpha=.8                         
+                 )
+ax.set_title(f'Daily High for Stock: {entered_stock.upper()}',
+             size=20)
 
+ax.spines['left'].set_position(('outward', 10))
+ax.spines['bottom'].set_position(('outward', 10))
+ax.spines['right'].set_visible(False)
+ax.spines['top'].set_visible(False)
+ax.yaxis.set_ticks_position('left')
+ax.xaxis.set_ticks_position('bottom')
+ax.set_ylabel('Daily High',size=10)
+ax.set_xlabel('Recorded Date',size=10)
+plt.xticks(rotation=90)
+plt.savefig('../data/chart_'+entered_stock+'.png')
 
-#Call API key via .env file (dotenv)
-
-#{'1. open': '247.5400', '2. high': '251.3050', '3. low': '243.9000', '4. close':
-# '250.1200', '5. volume': '580627'}
+#exit()
