@@ -4,7 +4,6 @@
 
 # ignore all files in this directory:
 *
-*.csv
 
 # except this gitignore file:
 !.gitignore
