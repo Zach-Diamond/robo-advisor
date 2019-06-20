@@ -52,11 +52,11 @@ except:
     exit()
 
 parsed_timeseries = parsed_response['Time Series (Daily)']
+all_dates = list(parsed_timeseries.keys()) 
 #PREVENTING ERRORS AT RESPONSE
 try:
     parsed_response['Time Series (Daily)'][todaydate]
 except:
-    all_dates = list(parsed_timeseries.keys()) 
     todaydate = all_dates[0]
     yesterdaydate = all_dates[1]
 
@@ -190,20 +190,24 @@ for c, value in enumerate(reasons_clean, 1): # https://www.geeksforgeeks.org/enu
     print(c, value)
 print(f"Total score: {total_score} of possible 14 points.")
 
+csv_headers = {"timestamp", "open", "high", "low", "close", "volume"}
+
 #Export to file based on stock name (and append if already exists)
 with open(f'../data/prices_{entered_stock}.csv', 'a') as csvFile:
     fieldnames = ['1. open', '2. high', '3. low', '4. close', '5. volume']
-    writer = csv.DictWriter(csvFile, fieldnames=fieldnames)
+    writer = csv.DictWriter(csvFile, fieldnames=csv_headers)
     writer.writeheader()
-    writer.writerow (today_parsed_timeseries)
+    for date in all_dates:
+        price_per_day = parsed_timeseries[date]
+        writer.writerow ({
+            "timestamp":date,
+            "open":price_per_day["1. open"],
+            "high":price_per_day["2. high"],
+            "low":price_per_day["3. low"],
+            "close":price_per_day["4. close"],
+            "volume":price_per_day["5. volume"]
+        })
 csvFile.close()
-
-# keys = parsed_timeseries[0].keys()
-# with open(f'../data/prices_{entered_stock}.csv', 'a') as csvFile:
-#  # Using dictionary keys as fieldnames for the CSV file header
-#     dict_writer = csv.DictWriter(csvFile, keys)
-#     dict_writer.writeheader()
-#     dict_writer.writerows(parsed_timeseries)
 
 print('--------------------------------------')
 print('GOOD LUCK INVESTING!')
