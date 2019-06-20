@@ -242,5 +242,4 @@ ax.set_ylabel('Daily High',size=10)
 ax.set_xlabel('Recorded Date',size=10)
 plt.xticks(rotation=90)
 plt.savefig('../data/chart_'+entered_stock+'.png')
-
-#exit()
+exit()
